@@ -16,8 +16,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update() {
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
-        Quaternion toRotation = Quaternion.LookRotation(moveDir, Vector3.up);
-        if(moveDir != Vector3.zero) transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        if(moveDir != Vector3.zero) {
+            Quaternion toRotation = Quaternion.LookRotation(moveDir, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        }
         rb.velocity +=  moveDir * speed * Time.deltaTime;
     }
 
