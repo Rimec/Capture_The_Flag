@@ -3,38 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
+public enum Team{
+    NONE = 0,
+    RED = 1,
+    BLUE = 2
+}
+
 public class GameManager : MonoBehaviour
 {
-    public List<int> playerPoints = new List<int>();
-    public List<GameObject> players = new List<GameObject>();
     public static GameManager instance;
 
-    public MultipleTargetsCamera multipleTargetsCamera;
+    public NetworkVariable<int> redTeamPoints = new NetworkVariable<int>();
+    public NetworkVariable<int> blueTeamPoints = new NetworkVariable<int>();
 
-    Action onConnectionEvent;
+    public MultipleTargetsCamera multipleTargetsCamera;
+    public UIManager uIManager;
+
     private void Awake() {
         if(instance)
             Destroy(instance.gameObject);
         instance = this;
         DontDestroyOnLoad(this.gameObject);
-
-
     }
 
-    public void AddPoint(int id){
-        if (playerPoints.Count == 0){
-            playerPoints.Add(1);
-        }
-        else if(id >= playerPoints.Count - 1){
-            playerPoints.Add(1);
-        }
-        else{
-            playerPoints[id]++;   
-        }
+    public void AddPoint(Team team){
+        if(team == Team.RED)
+            redTeamPoints.Value++;
+        else
+            blueTeamPoints.Value++;
     }
 
-    public void AddPlayer(GameObject player){
-        players.Add(this.gameObject);
+    public NetworkVariable<int> lastPlayerTeam = new NetworkVariable<int>(0);
+    public void AddPlayer(NetworkBehaviour player){
+        lastPlayerTeam.Value = lastPlayerTeam.Value + 1 % 2;
+        Team team = (Team)lastPlayerTeam.Value;
+        PlayerController playerController = player as PlayerController;
+        if(playerController.team.Value == Team.NONE){
+            playerController.team.Value = team;
+            if(team == Team.RED)
+                uIManager.SetCurrentTeamText("Red");
+            else
+                uIManager.SetCurrentTeamText("Blue");
+        }
         multipleTargetsCamera.targets.Add(player.transform);
     }
 }

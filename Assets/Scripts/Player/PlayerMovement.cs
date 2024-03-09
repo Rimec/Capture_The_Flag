@@ -15,25 +15,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void Update() {
-        /*Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+        Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
         if(moveDir != Vector3.zero) {
             Quaternion toRotation = Quaternion.LookRotation(moveDir, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
         }
-        rb.velocity +=  moveDir * speed * Time.deltaTime;*/
+        rb.velocity +=  moveDir * speed * Time.deltaTime;
 
-        float mov = Input.GetAxis("Vertical");
-        float rot = Input.GetAxis("Horizontal");
-        transform.Rotate(0, rot * rotationSpeed * Time.deltaTime, 0);
+        // float mov = Input.GetAxis("Vertical");
+        // float rot = Input.GetAxis("Horizontal");
+        // transform.Rotate(0, rot * rotationSpeed * Time.deltaTime, 0);
        
        
 
-        rb.velocity += transform.forward * mov * speed * Time.deltaTime;
-    }
-
-    private void OnTriggerEnter(Collider other) {
-        if(other.CompareTag("Frog")){
-            GameManager.instance.AddPoint(playerId);
-        }
+        // rb.velocity += transform.forward * mov * speed * Time.deltaTime;
     }
 }
