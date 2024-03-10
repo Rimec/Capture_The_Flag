@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textCurrentTeam;
     [SerializeField] private TextMeshProUGUI textBlueTeamPoints;
     [SerializeField] private TextMeshProUGUI textRedTeamPoints;
+    [SerializeField] public TextMeshProUGUI textRedTeamDebug;
     private void Start(){
         panel.SetActive(true);
         buttonStartHost.onClick.AddListener(delegate { NetworkManager.Singleton.StartHost(); panel.SetActive(false); });

@@ -9,15 +9,20 @@ public enum Team{
     BLUE = 2
 }
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     public static GameManager instance;
 
-    public NetworkVariable<int> redTeamPoints = new NetworkVariable<int>();
-    public NetworkVariable<int> blueTeamPoints = new NetworkVariable<int>();
+    public NetworkVariable<int> redTeamPoints = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> blueTeamPoints = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> lastPlayerTeam = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public MultipleTargetsCamera multipleTargetsCamera;
     public UIManager uIManager;
+
+    public override void OnNetworkSpawn(){
+        base.OnNetworkSpawn();
+    }
 
     private void Awake() {
         if(instance)
@@ -33,18 +38,13 @@ public class GameManager : MonoBehaviour
             blueTeamPoints.Value++;
     }
 
-    public NetworkVariable<int> lastPlayerTeam = new NetworkVariable<int>(0);
     public void AddPlayer(NetworkBehaviour player){
-        lastPlayerTeam.Value = lastPlayerTeam.Value + 1 % 2;
         Team team = (Team)lastPlayerTeam.Value;
-        PlayerController playerController = player as PlayerController;
-        if(playerController.team.Value == Team.NONE){
-            playerController.team.Value = team;
-            if(team == Team.RED)
-                uIManager.SetCurrentTeamText("Red");
-            else
-                uIManager.SetCurrentTeamText("Blue");
-        }
+        if(team == Team.RED)
+            uIManager.SetCurrentTeamText("Red");
+        else
+            uIManager.SetCurrentTeamText("Blue");
         multipleTargetsCamera.targets.Add(player.transform);
     }
+
 }

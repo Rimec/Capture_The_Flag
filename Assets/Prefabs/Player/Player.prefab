@@ -328,7 +328,6 @@ GameObject:
   - component: {fileID: 8489226696156805464}
   - component: {fileID: 8489226696156805415}
   - component: {fileID: 8792646854168947667}
-  - component: {fileID: 5431954083003669995}
   - component: {fileID: 6385932316375309699}
   - component: {fileID: 1483553464321227466}
   - component: {fileID: 5809824715553227558}
@@ -405,21 +404,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!114 &5431954083003669995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8489226696156805465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56f31b3b92c07ec408585b7a70e0c2d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 10
-  rotationSpeed: 700
-  playerId: 0
 --- !u!114 &6385932316375309699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,6 +416,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cec8ba0d8a122647bf1831b1766f878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 10
+  rotationSpeed: 300
   hasFlag:
     m_InternalValue: 0
   team:
@@ -455,11 +441,11 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
+  RotAngleThreshold: 0.001
   ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
