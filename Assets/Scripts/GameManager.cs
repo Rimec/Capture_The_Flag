@@ -12,6 +12,7 @@ public enum Team{
 public class GameManager : NetworkBehaviour
 {
     public static GameManager instance;
+    public FrogController frogController;
 
     public NetworkVariable<int> redTeamPoints = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<int> blueTeamPoints = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -20,22 +21,37 @@ public class GameManager : NetworkBehaviour
     public MultipleTargetsCamera multipleTargetsCamera;
     public UIManager uIManager;
 
+
+    private readonly ulong[] targetClientsArray = new ulong[1];
+
     public override void OnNetworkSpawn(){
         base.OnNetworkSpawn();
+
+        blueTeamPoints.OnValueChanged += delegate { OnPointsChanged(); };
+        redTeamPoints.OnValueChanged += delegate { OnPointsChanged(); };
     }
 
     private void Awake() {
-        if(instance)
+        if (instance)
             Destroy(instance.gameObject);
         instance = this;
         DontDestroyOnLoad(this.gameObject);
     }
-
-    public void AddPoint(Team team){
-        if(team == Team.RED)
+    [ServerRpc(RequireOwnership = false)]
+    public void AddPointServerRpc(int team) {
+        if (team == (int)Team.RED) {
             redTeamPoints.Value++;
-        else
+        }
+        else {
             blueTeamPoints.Value++;
+        }
+    }
+    public void OnPointsChanged() {
+        uIManager.SetRedTeamPoints(redTeamPoints.Value);
+        uIManager.SetBlueTeamPoints(blueTeamPoints.Value);
+    }
+    public void AddPoint(Team team){
+        AddPointServerRpc((int)team);
     }
 
     public void AddPlayer(NetworkBehaviour player){
@@ -44,7 +60,7 @@ public class GameManager : NetworkBehaviour
             uIManager.SetCurrentTeamText("Red");
         else
             uIManager.SetCurrentTeamText("Blue");
-        multipleTargetsCamera.targets.Add(player.transform);
+        //multipleTargetsCamera.targets.Add(player.transform);
     }
 
 }
