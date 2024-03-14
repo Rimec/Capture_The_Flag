@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Unity.Netcode;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Unity.Netcode.Transports.UTP;
 
 public class UIManager : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textCurrentTeam;
     [SerializeField] private TextMeshProUGUI textBlueTeamPoints;
     [SerializeField] private TextMeshProUGUI textRedTeamPoints;
+    [SerializeField] private TMP_InputField inputFieldIp;
 
     public GameObject Panel {get => panel; set {panel = value;} }
     private void Start(){
@@ -23,6 +25,9 @@ public class UIManager : MonoBehaviour
         buttonStartHost.onClick.AddListener(delegate { NetworkManager.Singleton.StartHost(); panel.SetActive(false); });
         buttonStartClient.onClick.AddListener(delegate { NetworkManager.Singleton.StartClient(); panel.SetActive(false); });
         buttonExit.onClick.AddListener(delegate { SceneManager.LoadScene(0); });
+        inputFieldIp.onEndEdit.AddListener(delegate { if(inputFieldIp.text != "") {UnityTransport transport = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport; transport.ConnectionData.Address = inputFieldIp.text;} });
+        inputFieldIp.onValueChanged.AddListener(delegate { if(inputFieldIp.text != "") {UnityTransport transport = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport; transport.ConnectionData.Address = inputFieldIp.text;} });
+        inputFieldIp.onSubmit.AddListener(delegate { if(inputFieldIp.text != "") {UnityTransport transport = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport; transport.ConnectionData.Address = inputFieldIp.text;} });
     }
 
     public void SetRedTeamPoints(int points){
