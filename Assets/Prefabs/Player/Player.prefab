@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1332530747316453829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8696004766106174012}
+  m_Layer: 0
+  m_Name: AimSpot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8696004766106174012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332530747316453829}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalPosition: {x: 0, y: 1, z: 0.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8489226696156805464}
+  m_LocalEulerAnglesHint: {x: -45, y: 0, z: 0}
 --- !u!1 &3456716958578925345
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,6 +386,7 @@ Transform:
   - {fileID: 1600698850932180824}
   - {fileID: 7638123561812041521}
   - {fileID: 8275716777108768521}
+  - {fileID: 8696004766106174012}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8489226696156805415
@@ -369,7 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 679675859
+  GlobalObjectIdHash: 2440596802
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -430,6 +462,11 @@ MonoBehaviour:
   team:
     m_InternalValue: 0
   hasInitialized: 0
+  throwForce: 0
+  hasRock: 1
+  rockProjectile: {fileID: 6450147882748712458, guid: fed930c8bccdacc489d44844e91e9b24,
+    type: 3}
+  rockAimSpot: {fileID: 8696004766106174012}
 --- !u!114 &1483553464321227466
 MonoBehaviour:
   m_ObjectHideFlags: 0

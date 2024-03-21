@@ -17,6 +17,15 @@ public class PlayerController : NetworkBehaviour {
 
     private readonly ulong[] targetClientsArray = new ulong[1];
     public bool hasInitialized = false;
+
+    //combate aqui em baixo renan
+    
+    public float throwForce = 0f;
+    public bool hasRock = true;
+    public GameObject rockProjectile;
+    public Transform rockAimSpot;
+
+
     public override void OnNetworkSpawn(){
         base.OnNetworkSpawn();
 
@@ -48,6 +57,9 @@ public class PlayerController : NetworkBehaviour {
             team.Value = _team;
             GameManager.instance.AddPlayer(this);
         }
+        
+        Throw();
+        
         Move();
     }
 
@@ -118,5 +130,29 @@ public class PlayerController : NetworkBehaviour {
             GameManager.instance.frogController.gameObject.SetActive(true);
             GameManager.instance.frogController.transform.SetPositionAndRotation(new Vector3(0, 16, 0), Quaternion.identity);
         }
+    }
+
+    public void Throw()
+    {
+        if (hasRock)
+        {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                if (throwForce <= 10)
+                    throwForce += 3 * Time.deltaTime;
+            }
+
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                GameObject rock = Instantiate(rockProjectile, rockAimSpot.position, rockAimSpot.rotation);
+                if(rock.gameObject.TryGetComponent<Rigidbody>(out Rigidbody r))
+                {
+                    r.AddForce(r.transform.forward * throwForce, ForceMode.Impulse);
+                }
+                
+                throwForce = 0;
+            }
+        }
+        
     }
 }
