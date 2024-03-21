@@ -21,7 +21,7 @@ public class PlayerController : NetworkBehaviour {
     //combate aqui em baixo renan
     
     public float throwForce = 0f;
-    public bool hasRock = true;
+    public bool hasRock;
     public GameObject rockProjectile;
     public Transform rockAimSpot;
 
@@ -87,7 +87,11 @@ public class PlayerController : NetworkBehaviour {
         if (!IsOwner) return;
         if (!other.CompareTag("Frog")) return; 
         hasFrog.Value = true;
+
+        
     }
+
+ 
 
     [ServerRpc(RequireOwnership = false)]
     public void LooseFrogServerRpc(ulong player1) {
@@ -108,6 +112,11 @@ public class PlayerController : NetworkBehaviour {
     }
 
     private void OnCollisionEnter(Collision other) {
+        if (other.gameObject.CompareTag("Rock") && hasRock == false)
+        {
+            hasRock = true;
+            Destroy(other.gameObject);
+        }
         if (!IsOwner) return;
         if (!other.collider.CompareTag("Player")) return;
 
@@ -117,7 +126,8 @@ public class PlayerController : NetworkBehaviour {
         if (hasFrog.Value) {
             hasFrog.Value = false;
         }
-
+        
+            
         Debug.Log("Collided with player");
     }
 
@@ -139,18 +149,18 @@ public class PlayerController : NetworkBehaviour {
             if (Input.GetKey(KeyCode.Space))
             {
                 if (throwForce <= 10)
-                    throwForce += 3 * Time.deltaTime;
+                    throwForce += 5 * Time.deltaTime;
             }
 
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 GameObject rock = Instantiate(rockProjectile, rockAimSpot.position, rockAimSpot.rotation);
-                if(rock.gameObject.TryGetComponent<Rigidbody>(out Rigidbody r))
+                if (rock.gameObject.TryGetComponent<Rigidbody>(out Rigidbody r))
                 {
                     r.AddForce(r.transform.forward * throwForce, ForceMode.Impulse);
                 }
-                
                 throwForce = 0;
+                hasRock = false;
             }
         }
         
