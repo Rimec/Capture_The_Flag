@@ -25,6 +25,8 @@ public class PlayerController : NetworkBehaviour {
     public GameObject rockProjectile;
     public Transform rockAimSpot;
 
+    public Animator anim;
+
 
     public override void OnNetworkSpawn(){
         base.OnNetworkSpawn();
@@ -59,7 +61,7 @@ public class PlayerController : NetworkBehaviour {
         }
         
         Throw();
-        
+        MeleeAttack();
         Move();
     }
 
@@ -84,6 +86,11 @@ public class PlayerController : NetworkBehaviour {
     }
 
     private void OnTriggerEnter(Collider other) {
+        if (other.gameObject.CompareTag("Rock") && hasRock == false)
+        {
+            hasRock = true;
+            Destroy(other.gameObject);
+        }      
         if (!IsOwner) return;
         if (!other.CompareTag("Frog")) return; 
         hasFrog.Value = true;
@@ -112,10 +119,27 @@ public class PlayerController : NetworkBehaviour {
     }
 
     private void OnCollisionEnter(Collision other) {
-        if (other.gameObject.CompareTag("Rock") && hasRock == false)
+        if (other.gameObject.CompareTag("Rock")/* && hasRock == false*/)
         {
-            hasRock = true;
-            Destroy(other.gameObject);
+            Debug.Log("estunado");
+            rb.velocity = Vector3.zero;
+
+            /*if(other.gameObject.TryGetComponent(out Rigidbody r))
+            {
+                
+                if(r.velocity.normalized == Vector3.zero)
+                {
+                    hasRock = true;
+                    Destroy(other.gameObject);
+                }
+                else
+                {
+                    //estuna o jogador
+                    Debug.Log("estunado");
+                    rb.velocity = Vector3.zero;
+                } 
+            }*/ //tentei fazer com um check na velocicade mas não funcionou :(
+
         }
         if (!IsOwner) return;
         if (!other.collider.CompareTag("Player")) return;
@@ -142,14 +166,27 @@ public class PlayerController : NetworkBehaviour {
         }
     }
 
+
+    public void MeleeAttack()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && !hasRock)
+        {
+            anim.SetTrigger("Attack");
+        }
+    }
     public void Throw()
     {
         if (hasRock)
         {
             if (Input.GetKey(KeyCode.Space))
             {
+                
                 if (throwForce <= 10)
+                {
                     throwForce += 5 * Time.deltaTime;
+                    anim.SetFloat("Charging", throwForce);
+                }
+                    
             }
 
             if (Input.GetKeyUp(KeyCode.Space))
@@ -160,6 +197,7 @@ public class PlayerController : NetworkBehaviour {
                     r.AddForce(r.transform.forward * throwForce, ForceMode.Impulse);
                 }
                 throwForce = 0;
+                anim.SetFloat("Charging", throwForce);
                 hasRock = false;
             }
         }
