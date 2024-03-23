@@ -8,8 +8,6 @@ public class Base : NetworkBehaviour
     bool hasCompleted = true;
 
     private void OnTriggerEnter(Collider other) {
-        //Debug.Log(OwnerClientId);
-        //GameManager.instance.uIManager.SetCurrentTeamText($"{}");
         if (!IsOwner) return;
         if (!hasCompleted) return;
         if (!other.CompareTag("Player")) return;

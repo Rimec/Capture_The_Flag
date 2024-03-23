@@ -71,13 +71,11 @@ public class GameManager : NetworkBehaviour
     }
 
     public void AddPlayer(NetworkBehaviour player){
-        /*
         Team team = (Team)lastPlayerTeam.Value;
         if(team == Team.RED)
             uIManager.SetCurrentTeamText("Red");
         else
             uIManager.SetCurrentTeamText("Blue");
-        */
         //multipleTargetsCamera.targets.Add(player.transform);
     }
 
