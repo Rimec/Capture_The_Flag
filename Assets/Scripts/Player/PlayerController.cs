@@ -39,7 +39,7 @@ public class PlayerController : NetworkBehaviour {
             rb = GetComponent<Rigidbody>();
         }
         ChangeColor(team.Value);
-
+        OnHasFrogChanged();
         hasFrog.OnValueChanged += delegate { OnHasFrogChanged(); };
         team.OnValueChanged += delegate { ChangeColor(team.Value); };
     }
@@ -48,7 +48,7 @@ public class PlayerController : NetworkBehaviour {
     {
         base.OnNetworkDespawn();
 
-        if (!IsServer) GameManager.instance.uIManager.Panel.SetActive(true);
+        //if (IsServer) GameManager.instance.uIManager.Panel.SetActive(true);
     }
 
     public void Update(){
@@ -58,6 +58,7 @@ public class PlayerController : NetworkBehaviour {
             Team _team = (Team)GameManager.instance.lastPlayerTeam.Value;
             team.Value = _team;
             GameManager.instance.AddPlayer(this);
+            GameManager.instance.OnPointsChanged();
         }
         
         Throw();
@@ -94,11 +95,8 @@ public class PlayerController : NetworkBehaviour {
         if (!IsOwner) return;
         if (!other.CompareTag("Frog")) return; 
         hasFrog.Value = true;
-
-        
+        GameManager.instance.ChangeOnePlayerHasFrogServerRpc(true);
     }
-
- 
 
     [ServerRpc(RequireOwnership = false)]
     public void LooseFrogServerRpc(ulong player1) {
@@ -115,12 +113,12 @@ public class PlayerController : NetworkBehaviour {
     [ClientRpc(RequireOwnership = false)]
     private void ThrowFrogClientRpc(ClientRpcParams clientRpcParams = default) {
         if (!IsOwner) return;
-        hasFrog.Value = false; 
+        hasFrog.Value = false;
+        GameManager.instance.ChangeOnePlayerHasFrogServerRpc(false);
     }
 
     private void OnCollisionEnter(Collision other) {
-        if (other.gameObject.CompareTag("Rock")/* && hasRock == false*/)
-        {
+        if (other.gameObject.CompareTag("Rock")/* && hasRock == false*/) {
             Debug.Log("estunado");
             rb.velocity = Vector3.zero;
 
@@ -138,34 +136,27 @@ public class PlayerController : NetworkBehaviour {
                     Debug.Log("estunado");
                     rb.velocity = Vector3.zero;
                 } 
-            }*/ //tentei fazer com um check na velocicade mas não funcionou :(
-
+            }*/ //tentei fazer com um check na velocicade mas nï¿½o funcionou :(
         }
         if (!IsOwner) return;
         if (!other.collider.CompareTag("Player")) return;
 
         if (other.gameObject.TryGetComponent(out PlayerController player)) {
+            if(player.team.Value == team.Value) return;
             player.LooseFrogServerRpc(player.OwnerClientId);
         }
         if (hasFrog.Value) {
             hasFrog.Value = false;
+            GameManager.instance.ChangeOnePlayerHasFrogServerRpc(false);
         }
         
-            
         Debug.Log("Collided with player");
     }
 
     public void OnHasFrogChanged() {
-        if (hasFrog.Value) {
-            frog.SetActive(true);
-            GameManager.instance.frogController.gameObject.SetActive(false);
-        } else {
-            frog.SetActive(false);
-            GameManager.instance.frogController.gameObject.SetActive(true);
-            GameManager.instance.frogController.transform.SetPositionAndRotation(new Vector3(0, 16, 0), Quaternion.identity);
-        }
+        frog.SetActive(hasFrog.Value);
+        GameManager.instance.frogController.gameObject.SetActive(!GameManager.instance.onePlayerHasFrog.Value);
     }
-
 
     public void MeleeAttack()
     {
@@ -201,6 +192,5 @@ public class PlayerController : NetworkBehaviour {
                 hasRock = false;
             }
         }
-        
     }
 }

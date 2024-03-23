@@ -14,6 +14,7 @@ public class GameManager : NetworkBehaviour
     public static GameManager instance;
     public FrogController frogController;
 
+    public NetworkVariable<bool> onePlayerHasFrog = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<int> redTeamPoints = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<int> blueTeamPoints = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<int> lastPlayerTeam = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -29,6 +30,7 @@ public class GameManager : NetworkBehaviour
 
         blueTeamPoints.OnValueChanged += delegate { OnPointsChanged(); };
         redTeamPoints.OnValueChanged += delegate { OnPointsChanged(); };
+        onePlayerHasFrog.OnValueChanged += delegate { OnChangeOnePlayerHasFrog(); };
     }
 
     private void Awake() {
@@ -54,12 +56,28 @@ public class GameManager : NetworkBehaviour
         AddPointServerRpc((int)team);
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void ChangeOnePlayerHasFrogServerRpc(bool hasFrog){
+        onePlayerHasFrog.Value = hasFrog;
+    }
+    public void OnChangeOnePlayerHasFrog(){
+        if(!onePlayerHasFrog.Value) {
+            frogController.gameObject.SetActive(true);
+            frogController.transform.SetPositionAndRotation(new Vector3(0, 16, 0), Quaternion.identity);
+        }
+        else {
+            frogController.gameObject.SetActive(false);
+        }
+    }
+
     public void AddPlayer(NetworkBehaviour player){
+        /*
         Team team = (Team)lastPlayerTeam.Value;
         if(team == Team.RED)
             uIManager.SetCurrentTeamText("Red");
         else
             uIManager.SetCurrentTeamText("Blue");
+        */
         //multipleTargetsCamera.targets.Add(player.transform);
     }
 
